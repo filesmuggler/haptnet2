@@ -1,0 +1,10 @@
+path_to_dataset: "../../datasets/QCAT/"
+
+# Modalities:
+# FL - front left,
+# FR - front right,
+# BR - back right,
+# BL - back left.
+modalities: ['FL','FR','BR','BL']
+
+save_to_pickle: False

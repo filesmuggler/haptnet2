@@ -20,6 +20,8 @@ import pickle
 class QCAT_Loader:
     def __init__(self, path_to_dataset=None,pick_modalities=None, save_to_pickle=False):
         self.path_to_data = path_to_dataset
+        self.modalities = pick_modalities
+
         self.num_classes = 6  # we have 6 terrain classes
         self.num_trials = 10  # the robot walked on each terrain 10 times
         self.num_steps = 8  # the robot walked 8 steps on each terrain
@@ -29,13 +31,14 @@ class QCAT_Loader:
         self.relevant_colms = 12  # this is our force sensor information in the csv files: (Forward Right (FR), FL, BR, BL: XYZ)
         self.all_seq = self.num_classes * self.num_diff_speeds * self.num_trials * self.num_steps
 
-        self.all_data = np.zeros([self.all_seq, self.max_steps, self.all_colms])
+        self.dataset = np.zeros([self.all_seq, self.max_steps, self.all_colms])
         self.data_steps_array = np.zeros([self.all_seq, self.max_steps, self.relevant_colms])
         self.data_labels_array = np.zeros((self.all_seq, self.num_classes))
         self.data_length_array = np.zeros((self.all_seq))
         self.data_length_array = self.data_length_array.astype(int)
 
         self._read_dataset()
+        self._numpify_dataset()
 
     def _read_dataset(self):
         cnt = 0
@@ -50,11 +53,11 @@ class QCAT_Loader:
                 step = int(step)
                 for k in range(self.num_trials):
                     for l in range(self.num_steps):
-                        self.all_data[cnt, 0:step, :] = tmp_list[k][l * step:(l + 1) * step]
+                        self.dataset[cnt, 0:step, :] = tmp_list[k][l * step:(l + 1) * step]
                         self.data_labels_array[cnt, i] = 1.0
                         self.data_length_array[cnt] = step
                         cnt += 1
-        self.data_steps_array = self.all_data[:, :, 4:16]  # to have last relevant data in csv files
+        self.data_steps_array = self.dataset[:, :, 4:16]  # to have last relevant data in csv files
 
     def _read_lines(self,file):
         with open(file, newline="") as data:
@@ -81,15 +84,37 @@ class QCAT_Loader:
         each_step = np.floor(minimum / num_steps)
         return each_step, inputs
 
+    def _numpify_dataset(self):
+        extracted_signals = np.array([self.dataset[i][:, [4+j for j in self.modalities]] for i in range(len(self.dataset))])
+        extracted_labels = [self.dataset[i][:, 1:3] for i in range(len(self.dataset))]
+
+        extracted_signals_norm = [(extracted_signals[i]-np.mean(extracted_signals[i]))/np.std(extracted_signals[i])
+                                  for i in range(len(extracted_signals))]
+        self.extracted_dataset = [(extracted_labels[i], extracted_signals[i])
+                                  for i in range(len(extracted_signals))]
+        self.extracted_dataset_norm = [(extracted_labels[i], extracted_signals_norm[i])
+                                  for i in range(len(extracted_signals_norm))]
+
+    def get_original_dataset(self):
+        return self.dataset
+
+    def get_numpified_dataset(self):
+        return self.extracted_dataset
+
+    def get_normalized_dataset(self):
+        return self.extracted_dataset_norm
+
 if __name__ == "__main__":
     config_file = "./config/qcat.yaml"
 
     with open(config_file, 'r') as file_yaml:
-        stink_config = yaml.safe_load(file_yaml)
+        qcat_config = yaml.safe_load(file_yaml)
 
     q_loader = QCAT_Loader(
-        path_to_dataset=stink_config['path_to_dataset'],
-        pick_modalities=stink_config['modalities'],
-        save_to_pickle=stink_config['save_to_pickle']
+        path_to_dataset=qcat_config['path_to_dataset'],
+        pick_modalities=qcat_config['modalities'],
+        save_to_pickle=qcat_config['save_to_pickle']
     )
+
+
     print("finished")

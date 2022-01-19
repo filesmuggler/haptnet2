@@ -1,9 +1,14 @@
 path_to_dataset: "../../datasets/STINK/all_locations_v2.mat"
-
+save_to_pickle: False
 # Modalities
-# [IMU_sole_linacc(xyz), IMU_shank_linacc(xyz), Force(xyz), Torque(xyz), IMU_shank_angvel(xyz), IMU_sole_angvel(xyz)]
+# 0,1,2 - IMU_sole_linacc(xyz),
+# 3,4,5 - IMU_shank_linacc(xyz),
+# 6,7,8 - Force(xyz),
+# 9,10,11 - Torque(xyz),
+# 12,13,14 - IMU_shank_angvel(xyz),
+# 15,16,17 -IMU_sole_angvel(xyz).
 # modalities: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]
 modalities: [3,4,5,12,13,14]
 
-save_to_pickle: False
+
 

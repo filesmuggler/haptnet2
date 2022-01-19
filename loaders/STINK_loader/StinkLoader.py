@@ -20,17 +20,16 @@ class STINK_Loader:
         self._numpify_dataset()
 
     def _numpify_dataset(self):
-        self.extracted_data = [self.dataset['sensor_readings'][i][0][:, self.pick_modalities]
+        extracted_signals = [self.dataset['sensor_readings'][i][0][:, self.pick_modalities]
              for i in range(len(self.dataset['sensor_readings']))]
 
-        self.extracted_labels = self.dataset['label_vector'][:,1]
+        extracted_labels = self.dataset['label_vector'][:,1]
 
-        self.extracted_dataset = [(self.extracted_data[i],self.extracted_labels[i])
-                                  for i in range(len(self.extracted_data))]
+        self.extracted_dataset = [(extracted_labels[i],extracted_signals[i])
+                                  for i in range(len(extracted_signals))]
 
 
     def get_original_dataset(self):
-        #TODO: numpy array
         return self.dataset
 
     def get_numpified_dataset(self):

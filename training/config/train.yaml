@@ -1,0 +1,42 @@
+train_dataset: ""
+val_dataset: ""
+test_dataset: ""
+
+batch: 16
+num_epochs: 1000
+num_folds: 10
+
+resample: True
+resample_rate: 400
+
+model_configs:
+  -
+    name: "forces_RNN"
+    modalities: ["state_estimator"]
+    fusion_type: None
+    dropout: 0.1
+    return_sequences: False
+  -
+    name: "imu_shank_RNN"
+    modalities: ["imu_shank"]
+    fusion_type: None
+    dropout: 0.1
+    return_sequences: False
+  -
+    name: "imu_bridge_RNN"
+    modalities: ["imu_bridge"]
+    fusion_type: None
+    dropout: 0.1
+    return_sequences: False
+  -
+    name: "imu_heel_RNN"
+    modalities: ["imu_heel"]
+    fusion_type: None
+    dropout: 0.1
+    return_sequences: False
+  -
+    name: "imu_toes_RNN"
+    modalities: ["imu_toes"]
+    fusion_type: None
+    dropout: 0.1
+    return_sequences: False

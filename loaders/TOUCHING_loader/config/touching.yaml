@@ -1,0 +1,7 @@
+path_to_dataset: "../../datasets/TOUCHING/touching.mat"
+save_to_pickle: False
+# Modalities
+# 0,1,2 - force XYZ,
+# 3,4,5 - torque XYZ,
+# modalities: [0,1,2,3,4,5]
+modalities: [0,1,2,3,4,5]

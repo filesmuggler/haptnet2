@@ -1,0 +1,21 @@
+raw_dataset_train: ../../datasets/HAPTNET/haptnet_1_train_raw.pkl
+raw_dataset_test: ../../datasets/HAPTNET/haptnet_1_test_raw.pkl
+
+resample: True
+new_number_of_samples: 400
+
+# Standarization is accomplished with use of mean and standard deviation
+standarization: True
+
+# Transform labels for training
+one_hot_encoding: True
+one_hot_classes:
+  brick: '[1 0 0 0 0 0]'
+  cone: '[0 1 0 0 0 0]'
+  extinguisher: '[0 0 1 0 0 0]'
+  sack: '[0 0 0 1 0 0]'
+  sponge: '[0 0 0 0 1 0]'
+  toolbox: '[0 0 0 0 0 1]'
+
+preprocessed_dataset: ../../datasets/HAPTNET/haptnet_1_preprocessed.pkl
+

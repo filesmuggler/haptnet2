@@ -1,7 +1,14 @@
-path_to_dataset: "../../datasets/HAPNET/ip_dataset_raw.pkl"
+#path_to_dataset: "../../datasets/HAPTNET/ip_dataset_final_4.pkl"
+path_to_dataset: "../../datasets/HAPTNET/haptnet_1_preprocessed.pkl"
 save_to_pickle: False
-# Modalities
-# 0,1,2 - force XYZ,
-# 3,4,5 - torque XYZ,
-# modalities: [0,1,2,3,4,5]
-modalities: [0,1,2,3,4,5]
+# Structure
+# class: [0,0,0,0,1,0]
+# numpy array - force XYZ,
+# numpy array - imu0 XYZW, imu1 XYZW, imu2 XYZW, imu3 XYZW,
+# ...
+modalities:
+  force: True
+  imu0: True
+  imu1: False
+  imu2: False
+  imu3: False

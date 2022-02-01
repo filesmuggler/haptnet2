@@ -1,42 +1,46 @@
+loader_path: "../loaders/HAPTNET_loader/config/haptnet.yaml"
+
 train_dataset: ""
 val_dataset: ""
 test_dataset: ""
 
 batch: 16
 num_epochs: 1000
-num_folds: 10
+num_folds: 5
+learning_rate: 1e-3
 
-resample: True
-resample_rate: 400
+
+# remember to put '/' at he end of the path
+log_dir: "iros2022/"
 
 model_configs:
   -
     name: "forces_RNN"
-    modalities: ["state_estimator"]
+    modalities: ["force","imu0"]
     fusion_type: None
     dropout: 0.1
     return_sequences: False
   -
     name: "imu_shank_RNN"
-    modalities: ["imu_shank"]
-    fusion_type: None
-    dropout: 0.1
-    return_sequences: False
-  -
-    name: "imu_bridge_RNN"
-    modalities: ["imu_bridge"]
-    fusion_type: None
-    dropout: 0.1
-    return_sequences: False
-  -
-    name: "imu_heel_RNN"
-    modalities: ["imu_heel"]
+    modalities: ["imu0"]
     fusion_type: None
     dropout: 0.1
     return_sequences: False
   -
     name: "imu_toes_RNN"
-    modalities: ["imu_toes"]
+    modalities: ["imu1"]
+    fusion_type: None
+    dropout: 0.1
+    return_sequences: False
+  -
+    name: "imu_bridge_RNN"
+    modalities: ["imu2"]
+    fusion_type: None
+    dropout: 0.1
+    return_sequences: False
+  -
+    name: "imu_heel_RNN"
+    modalities: ["imu3"]
     fusion_type: None
     dropout: 0.1
     return_sequences: False

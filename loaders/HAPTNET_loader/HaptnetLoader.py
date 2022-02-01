@@ -71,7 +71,7 @@ class HAPTNET_Loader:
         return self.modalities_filtered
 
 if __name__ == "__main__":
-    config_file = "./config/hapnet.yaml"
+    config_file = "config/haptnet.yaml"
 
     with open(config_file, 'r') as file_yaml:
         hapnet_config = yaml.safe_load(file_yaml)

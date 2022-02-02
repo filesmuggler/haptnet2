@@ -101,6 +101,10 @@ def train_model(dataset,config, num_classes):
             train_step, val_step, test_step = 0, 0, 0
 
             num_epochs = config['num_epochs']
+            for epoch in range(num_epochs):
+                print(f'running {epoch} epoch out of {num_epochs} of {fold_no} fold')
+
+
 
         print("x")
 

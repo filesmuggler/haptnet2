@@ -5,7 +5,7 @@ val_dataset: ""
 test_dataset: ""
 
 batch: 16
-num_epochs: 1000
+num_epochs: 250
 num_folds: 5
 learning_rate: 1e-3
 

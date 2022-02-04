@@ -26,7 +26,7 @@ class HaptnetBase(tf.keras.Model):
 
     def _add_fc_block(self,fc_layers: list, dropout: float):
         fc_net = tf.keras.Sequential()
-        fc_net.add(tf.keras.layers.Flatten())
+        #fc_net.add(tf.keras.layers.Flatten())
         for i, fc_units in enumerate(fc_layers):
             fc_net.add(tf.keras.layers.Dense(fc_units))
             if i != len(fc_layers) - 1:
@@ -36,19 +36,21 @@ class HaptnetBase(tf.keras.Model):
 
         return fc_net
 
-    def _add_conv_block(self, conv_filters: list, conv_kernels: list, conv_strides: list):
+    def _add_conv_block(self, conv_filters: list, conv_kernels: list, conv_strides: list, dropout: float):
         conv_net = tf.keras.Sequential()
         for i, (num_filters, kernel, stride) in enumerate(zip(conv_filters,conv_kernels,conv_strides)):
-            conv_net.add(tf.keras.layers.Conv1D(num_filters, kernel, stride, padding="SAME"))
+            conv_net.add(tf.keras.layers.Conv1D(num_filters, tuple(kernel), stride, padding="SAME"))
 
             if i != len(self.config['conv_filters']) - 1:
                 conv_net.add(tf.keras.layers.BatchNormalization())
                 conv_net.add(tf.keras.layers.Activation("relu"))
-                conv_net.add(tf.keras.layers.Dropout(self.config['dropout']))
+                conv_net.add(tf.keras.layers.Dropout(dropout))
 
         return conv_net
 
     def _add_lstm_block(self, lstm_units: int, return_seq: bool, dropout: float, stateful: bool):
+        fwd_block = tf.keras.Sequential()
+
         fwd_layer = tf.keras.layers.LSTM(lstm_units,
                                          return_sequences=return_seq,
                                          dropout=dropout,

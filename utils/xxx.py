@@ -14,10 +14,9 @@ import numpy as np
 # model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 # model.summary()
 
-backend.set_image_data_format('channels_first')
 
 model = Sequential()
-input_shape = (1,3,120)
+input_shape = (3,120,1)
 #input_shape = (120,3)
 model.add(Conv2D(64, kernel_size=(1,3), activation='relu', input_shape=input_shape))
 #model.add(DepthwiseConv2D(kernel_size=(1,3), activation='relu', input_shape=input_shape))
@@ -30,7 +29,7 @@ mock_data = np.random.rand(3,120)
 
 mock_data_t = tf.convert_to_tensor(mock_data)
 mock_data_t = tf.expand_dims(mock_data_t, 0)
-mock_data_t = tf.expand_dims(mock_data_t, 0)
+mock_data_t = tf.expand_dims(mock_data_t, -1)
 
 out = model(mock_data_t)
 out_np = out.numpy()

@@ -16,9 +16,16 @@ log_dir: "iros2022/"
 model_configs:
   -
     name: "forces_RNN"
-    modalities: ["force","imu0"]
+    modalities: ["force"]
     fusion_type: None
-    dropout: 0.1
+    conv_filters: [ 64,128,128 ]
+    conv_kernels: [ [1,3],[1,5],[1,5] ]
+    conv_strides: [ 1,3,3 ]
+    fc_units: [100,6]
+    dropout: 0.5
+    lstm_nest: 3
+    lstm_units: 128
+
     return_sequences: False
   -
     name: "imu_shank_RNN"

@@ -29,11 +29,27 @@ def res_block(inputs_shape):
 
 
 input_shape = (120,3)
+
+# resnet blocks
+
 inputs = Input(shape=input_shape)
 resnet_block_1 = res_block(inputs)
 resnet_block_2 = res_block(resnet_block_1)
 
-predictions_1 = Dense(100, activation='relu')(resnet_block_2)
+# lstm blocks
+
+f_lstm_1 = LSTM(128,return_sequences=True, return_state=True)(resnet_block_2)
+f_lstm_2 = LSTM(128,return_sequences=True, return_state=True)(f_lstm_1)
+f_lstm_3 = LSTM(128,return_sequences=True, return_state=True)(f_lstm_2)
+
+b_lstm_1 = LSTM(128,return_sequences=True,return_state=True,go_backwards=True)(resnet_block_2)
+b_lstm_2 = LSTM(128,return_sequences=True,return_state=True,go_backwards=True)(b_lstm_1)
+b_lstm_3 = LSTM(128,return_sequences=True,return_state=True,go_backwards=True)(b_lstm_2)
+
+added_seq = Concatenate(axis=1)([f_lstm_3[0],b_lstm_3[0]])
+
+added_flat = Flatten()(added_seq)
+predictions_1 = Dense(100, activation='relu')(added_flat)
 predictions_2 = Dense(6, activation='softmax')(predictions_1)
 model = Model(inputs=inputs,outputs=predictions_2)
 #model.add(DepthwiseConv2D(kernel_size=(1,3), activation='relu', input_shape=input_shape))

@@ -15,21 +15,36 @@ import numpy as np
 # model.summary()
 
 
-model = Sequential()
-input_shape = (3,120,1)
-#input_shape = (120,3)
-model.add(Conv2D(64, kernel_size=(1,3), activation='relu', input_shape=input_shape))
+#input_shape = (1,3,1)
+input_shape = (120,3)
+inputs = Input(shape=input_shape)
+x1 = Conv1D(64, kernel_size=3, activation='relu',padding='same')(inputs)
+x2 = Conv1D(32, kernel_size=3, activation='relu',padding='same')(x1)
+x1_residual = Conv1D(32,kernel_size=3,activation='relu',padding='same')(inputs)
+
+added = Add()([x1_residual,x2])
+
+predictions = Dense(6, activation='relu')(added)
+model = Model(inputs=inputs,outputs=predictions)
 #model.add(DepthwiseConv2D(kernel_size=(1,3), activation='relu', input_shape=input_shape))
 #model.add(SeparableConv1D(64, kernel_size=3, activation='relu', input_shape=input_shape))
+
+
+#model.add(LSTM(128, return_sequences=True, input_shape=(3,1)))
+# input time steps
+#data = np.array([0.1, 0.2, 0.3]).reshape((1,3,1))
+# make and show prediction
+#print(model.predict(data))
+
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 model.summary()
 
-mock_data = np.random.rand(3,120)
-#mock_data = np.random.rand(120, 3)
+#mock_data = np.random.rand(1,3)
+mock_data = np.random.rand(120, 3)
 
 mock_data_t = tf.convert_to_tensor(mock_data)
+# mock_data_t = tf.expand_dims(mock_data_t, 0)
 mock_data_t = tf.expand_dims(mock_data_t, 0)
-mock_data_t = tf.expand_dims(mock_data_t, -1)
 
 out = model(mock_data_t)
 out_np = out.numpy()

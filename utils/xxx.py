@@ -28,21 +28,28 @@ def res_block(inputs_shape):
 
 
 
-input_shape = (120,3)
+input_shape = (2,120,None)
 
 # resnet blocks
 
 inputs = Input(shape=input_shape)
-resnet_block_1 = res_block(inputs)
+inputs_f = Input(shape=(1,120,3))
+inputs_q = Input(shape=(1,120,4))
+
+resnet_block_1 = res_block(inputs_f)
 resnet_block_2 = res_block(resnet_block_1)
 
+resnet_block_3 = res_block(inputs_q)
+resnet_block_4 = res_block(resnet_block_3)
+
+res_add = Concatenate(axis=0)([resnet_block_4,resnet_block_2])
 # lstm blocks
 
-f_lstm_1 = LSTM(128,return_sequences=True, return_state=True)(resnet_block_2)
+f_lstm_1 = LSTM(128,return_sequences=True, return_state=True)(res_add)
 f_lstm_2 = LSTM(128,return_sequences=True, return_state=True)(f_lstm_1)
 f_lstm_3 = LSTM(128,return_sequences=True, return_state=True)(f_lstm_2)
 
-b_lstm_1 = LSTM(128,return_sequences=True,return_state=True,go_backwards=True)(resnet_block_2)
+b_lstm_1 = LSTM(128,return_sequences=True,return_state=True,go_backwards=True)(res_add)
 b_lstm_2 = LSTM(128,return_sequences=True,return_state=True,go_backwards=True)(b_lstm_1)
 b_lstm_3 = LSTM(128,return_sequences=True,return_state=True,go_backwards=True)(b_lstm_2)
 
@@ -67,10 +74,13 @@ model.summary()
 
 #mock_data = np.random.rand(1,3)
 mock_data = np.random.rand(120, 3)
+mock_data_2 = np.random.rand(120, 4)
 
 mock_data_t = tf.convert_to_tensor(mock_data)
+mock_data_2_t = tf.convert_to_tensor(mock_data_2)
 # mock_data_t = tf.expand_dims(mock_data_t, 0)
 mock_data_t = tf.expand_dims(mock_data_t, 0)
+mock_data_2_t = tf.expand_dims(mock_data_2_t, 0)
 
 out = model(mock_data_t)
 out_np = out.numpy()

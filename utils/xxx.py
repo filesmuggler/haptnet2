@@ -15,17 +15,27 @@ import numpy as np
 # model.summary()
 
 
+
+def res_block(inputs_shape):
+    x1 = Conv1D(64, kernel_size=3, activation='relu', padding='same')(inputs_shape)
+    x2 = Conv1D(32, kernel_size=3, activation='relu', padding='same')(x1)
+    x1_residual = Conv1D(32, kernel_size=3, activation='relu', padding='same')(inputs_shape)
+
+    added = Add()([x1_residual, x2])
+    return added
+
 #input_shape = (1,3,1)
+
+
+
 input_shape = (120,3)
 inputs = Input(shape=input_shape)
-x1 = Conv1D(64, kernel_size=3, activation='relu',padding='same')(inputs)
-x2 = Conv1D(32, kernel_size=3, activation='relu',padding='same')(x1)
-x1_residual = Conv1D(32,kernel_size=3,activation='relu',padding='same')(inputs)
+resnet_block_1 = res_block(inputs)
+resnet_block_2 = res_block(resnet_block_1)
 
-added = Add()([x1_residual,x2])
-
-predictions = Dense(6, activation='relu')(added)
-model = Model(inputs=inputs,outputs=predictions)
+predictions_1 = Dense(100, activation='relu')(resnet_block_2)
+predictions_2 = Dense(6, activation='softmax')(predictions_1)
+model = Model(inputs=inputs,outputs=predictions_2)
 #model.add(DepthwiseConv2D(kernel_size=(1,3), activation='relu', input_shape=input_shape))
 #model.add(SeparableConv1D(64, kernel_size=3, activation='relu', input_shape=input_shape))
 

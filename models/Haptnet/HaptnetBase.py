@@ -72,12 +72,6 @@ class HaptnetBase(tf.keras.Model):
         return conv_net
 
 
-
-
-    def _add_conv_layer(self, filter_size: int, kernel_size: int, stride: int, dropout: float):
-        c = Conv1D(filters=filter_size, kernel_size=kernel_size, stride=stride, dropout=dropout, padding="SAME")
-
-
     def _add_lstm_block(self, lstm_units: int, return_seq: bool, dropout: float, stateful: bool):
         fwd_block = tf.keras.Sequential()
 
@@ -100,3 +94,10 @@ class HaptnetBase(tf.keras.Model):
                                                    )
 
         return aggregator
+
+
+    def _create_lstm_block(self, lstm_units: int, return_sequences: bool, lstm_nest: int):
+
+        forward_model = keras.Model()
+
+        for i in range(lstm_nest):

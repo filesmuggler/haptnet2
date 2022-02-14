@@ -18,7 +18,7 @@ log_dir: "iros2022/"
 model_configs:
   -
     name: "Late_1"
-    modalities: ["force","imu0","imu1","imu2","imu3"]
+    modalities: ["force"]
     fusion_type: "late"
     conv_types: ["None", "SingleHop","SingleHop","SingleHop"]
     conv_filters: [ 16,32,32,64 ]

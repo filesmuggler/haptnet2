@@ -9,6 +9,7 @@ from sklearn.model_selection import StratifiedKFold
 
 from loaders.HAPTNET_loader.HaptnetLoader import HAPTNET_Loader
 from optimization.categorical_optimization import *
+from models.Haptnet.HaptnetLate import HaptnetLate
 
 def train_model(dataset,config, num_classes):
     trainX, trainY, testX, testY = dataset
@@ -16,8 +17,8 @@ def train_model(dataset,config, num_classes):
 
     for model_config in config['model_configs']:
         print("Running config: ", model_config['name'])
-        # modalities = model_config['modalities']
-        # num_modalities = len(modalities)
+        modalities = model_config['modalities']
+        num_modalities = len(modalities)
         fusion_type = model_config['fusion_type']
 
         if fusion_type == "None":
@@ -29,8 +30,8 @@ def train_model(dataset,config, num_classes):
             # TODO implement case
             raise NotImplementedError("not implemented scenario")
         elif fusion_type == "late":
-            # TODO implement case
-            raise NotImplementedError("not implemented scenario")
+            model = HaptnetLate(batch_size,6,model_config,model_config['modalities'],model_config['fusion_type'])
+            print("ahha")
         else:
             raise NotImplementedError("not implemented scenario")
 

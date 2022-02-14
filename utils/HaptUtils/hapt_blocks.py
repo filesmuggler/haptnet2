@@ -9,9 +9,10 @@ class CNN_1D_Block(layers.Layer):
                  padding="same",
                  activation="relu",
                  dropout=0.5,
-                 beta=1.0):
+                 beta=1.0,
+                 name="conv"):
         super(CNN_1D_Block, self).__init__()
-        self.conv = layers.Conv1D(out_channels, kernel_size, strides=stride, padding=padding)
+        self.conv = layers.Conv1D(out_channels, kernel_size, strides=stride, padding=padding, name=name)
         self.bn = layers.BatchNormalization()
         self.activation = activation
         self.beta = beta
@@ -32,7 +33,6 @@ class CNN_1D_Block(layers.Layer):
             return NotImplementedError
         return x
 
-
 class CNN_2D_Block(layers.Layer):
     def __init__(self, out_channels: int,
                  kernel_size=3,
@@ -40,9 +40,10 @@ class CNN_2D_Block(layers.Layer):
                  padding="same",
                  activation="relu",
                  dropout=0.5,
-                 beta=1.0):
+                 beta=1.0,
+                 name="conv"):
         super(CNN_2D_Block, self).__init__()
-        self.conv = layers.Conv2D(out_channels, kernel_size, strides=stride, padding=padding)
+        self.conv = layers.Conv2D(out_channels, kernel_size, strides=stride, padding=padding, name=name)
         self.bn = layers.BatchNormalization()
         self.activation = activation
         self.beta = beta
@@ -70,7 +71,8 @@ class Res_CNN1D_S_Block(layers.Layer):
                  padding="same",
                  activation="relu",
                  dropout=0.5,
-                 beta=1.0):
+                 beta=1.0,
+                 name="res_s"):
         super(Res_CNN1D_S_Block, self).__init__()
 
         self.cnn = CNN_1D_Block(out_channels=channels,
@@ -79,7 +81,8 @@ class Res_CNN1D_S_Block(layers.Layer):
                                 padding=padding,
                                 activation=activation,
                                 dropout=dropout,
-                                beta=beta)
+                                beta=beta,
+                                name=name+"_conv_1")
 
         self.identity_mapping = CNN_1D_Block(
                                 out_channels=channels,
@@ -88,7 +91,8 @@ class Res_CNN1D_S_Block(layers.Layer):
                                 padding=padding,
                                 activation="None",
                                 dropout=0.0,
-                                beta=beta)
+                                beta=beta,
+                                name=name+"_iden")
 
     def call(self, input_tensor, training=False, **kwargs):
         x = self.cnn(input_tensor,training=training)
@@ -103,7 +107,8 @@ class Res_CNN1D_D_Block(layers.Layer):
                  padding="same",
                  activation="relu",
                  dropout=0.5,
-                 beta=1.0):
+                 beta=1.0,
+                 name="res_d"):
         super(Res_CNN1D_D_Block, self).__init__()
 
         self.cnn1 = CNN_1D_Block(out_channels=channels[0],
@@ -112,7 +117,8 @@ class Res_CNN1D_D_Block(layers.Layer):
                                 padding=padding,
                                 activation=activation,
                                 dropout=dropout,
-                                beta=beta)
+                                beta=beta,
+                                name=name+"_conv_1")
 
         self.cnn2 = CNN_1D_Block(out_channels=channels[1],
                                  kernel_size=kernel_size[1],
@@ -120,7 +126,8 @@ class Res_CNN1D_D_Block(layers.Layer):
                                  padding=padding,
                                  activation=activation,
                                  dropout=dropout,
-                                 beta=beta)
+                                 beta=beta,
+                                 name=name+"_conv_2")
 
         self.identity_mapping = CNN_1D_Block(
                                 out_channels=channels[1],
@@ -129,7 +136,8 @@ class Res_CNN1D_D_Block(layers.Layer):
                                 padding="same",
                                 activation="None",
                                 dropout=0.0,
-                                beta=beta)
+                                beta=beta,
+                                name=name+"_iden")
 
     def call(self, input_tensor, training=False, **kwargs):
         x = self.cnn1(input_tensor,training=training)
@@ -137,4 +145,5 @@ class Res_CNN1D_D_Block(layers.Layer):
         iden = self.identity_mapping(input_tensor,training=training)
         x = layers.Add()([iden, x])
         return x
+
 

@@ -4,13 +4,13 @@ from tensorflow.keras.layers import *
 import numpy as np
 
 from HaptUtils.hapt_blocks import *
-
+from models.Haptnet.HaptnetLate import HaptnetLate
 
 class ResNetLike(keras.Model):
-    def __init__(self, num_classes=10):
+    def __init__(self, name="None"):
         super(ResNetLike, self).__init__()
-        self.b_1 = Res_CNN1D_S_Block(channels=3)
-        self.b_2 = Res_CNN1D_S_Block(channels=3)
+        self.b_1 = Res_CNN1D_D_Block(channels=[3,3],kernel_size=[3,3],stride=[1,1])
+        self.b_2 = Res_CNN1D_D_Block(channels=[3,3],kernel_size=[3,3],stride=[1,1])
 
     def call(self, input_tensor, training=False):
         x = self.b_1(input_tensor, training=training)
@@ -43,11 +43,6 @@ model.compile(
     metrics=["accuracy"],
 )
 
-# input_shape_forces = (1,120,3)
-# inputs_f = Input(shape=input_shape_forces)
-#
-# input_shape_quats = (1,120,4)
-# inputs_q = Input(shape=input_shape_quats)
 
 mock_data_f = np.random.rand(120, 3)
 mock_data_q = np.random.rand(120, 16)
@@ -64,20 +59,4 @@ in_data = ()
 
 out = model([mock_data_ft,mock_data_qt])
 out_np = out.numpy()
-# res_forces = Res_CNN1D_D_Block(channels=[3,3])(res_forces)
-#res_forces = Model(inputs=inputs_f,outputs=res_forces)
-#
-# res_quats = Res_CNN1D_S_Block(channels=3)(inputs_q)
-# res_quats = Res_CNN1D_D_Block(channels=[3,3])(res_quats)
-# res_quats = Model(inputs=inputs_q,outputs=res_quats)
-#
-# combined = Concatenate(axis=0)([res_forces.output, res_quats.output])
-#
-# z = Dense(2, activation="relu")(combined)
-# z = Dense(1, activation="linear")(z)
-#
-# model = Model(inputs=[res_forces.input, res_quats.input], outputs=z)
-#
-# model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-# model.summary()
 print("dupa")

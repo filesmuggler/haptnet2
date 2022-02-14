@@ -3,6 +3,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.layers import *
+from utils.HaptUtils.hapt_blocks import *
 
 class HaptnetBase(tf.keras.Model):
     def __init__(self, batch_size: int,
@@ -38,6 +39,7 @@ class HaptnetBase(tf.keras.Model):
         return fc_net
 
     def _add_conv_block(self, conv_filters: list, conv_kernels: list, conv_strides: list, dropout: float):
+        # DEPRECATED
         conv_net = tf.keras.Sequential()
         for i, (num_filters, kernel, stride) in enumerate(zip(conv_filters,conv_kernels,conv_strides)):
             conv_net.add(tf.keras.layers.Conv1D(num_filters, kernel, stride, padding="SAME"))
@@ -49,10 +51,27 @@ class HaptnetBase(tf.keras.Model):
 
         return conv_net
 
-    def _create_cnn_block(self, conv_types: list, conv_filters: list, conv_kernels: list, conv_strides: list, dropout: float, input_shape):
-        self.conv_layers = []
-        for i, (type, num_filters, kernel, stride) in enumerate(zip(conv_types, conv_filters, conv_kernels, conv_strides)):
-            c = Conv1D(filters=num_filters, kernel_size=kernel, stride=stride, dropout=dropout, padding="SAME")
+    def _create_cnn_block(self, conv_types: list, conv_filters: list, conv_kernels: list, conv_strides: list, dropout: float):
+        conv_net = []
+        for i, (conv_type, num_filters, kernel, stride) in enumerate(zip(conv_types, conv_filters, conv_kernels, conv_strides)):
+            if conv_type == "None":
+                c = CNN_1D_Block(out_channels=num_filters,kernel_size=kernel,stride=stride,dropout=dropout)
+                conv_net.append(c)
+            elif conv_type == "SingleHop":
+                c = Res_CNN1D_S_Block(channels=num_filters,kernel_size=kernel,stride=stride,dropout=dropout)
+                conv_net.append(c)
+            elif conv_type == "DoubleHop":
+                c = Res_CNN1D_D_Block(channels=[num_filters,num_filters],
+                                      kernel_size=[kernel,kernel],
+                                      stride=[stride,stride],
+                                      dropout=dropout)
+                conv_net.append(c)
+            else:
+                raise NotImplementedError
+
+        return conv_net
+
+
 
 
     def _add_conv_layer(self, filter_size: int, kernel_size: int, stride: int, dropout: float):

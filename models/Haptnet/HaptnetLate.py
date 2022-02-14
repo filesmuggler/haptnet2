@@ -32,45 +32,19 @@ class HaptnetLate(HaptnetBase):
 
     def _create_model(self):
         num_mod = len(self.modalities)
-
+        self.heads = []
         for m in self.modalities:
-            if m == "force":
-                self.force_head = self._create_cnn_block(
-                                            self.config['conv_types'],
-                                            self.config['conv_filters'],
-                                            self.config['conv_kernels'],
-                                            self.config['conv_strides'],
-                                            self.config['dropout'])
-            if m == "imu0":
-                self.imu0_head = self._create_cnn_block(
-                                            self.config['conv_types'],
-                                            self.config['conv_filters'],
-                                            self.config['conv_kernels'],
-                                            self.config['conv_strides'],
-                                            self.config['dropout'])
-            if m == "imu1":
-                self.imu1_head = self._create_cnn_block(
-                                            self.config['conv_types'],
-                                            self.config['conv_filters'],
-                                            self.config['conv_kernels'],
-                                            self.config['conv_strides'],
-                                            self.config['dropout'])
-            if m == "imu2":
-                self.imu2_head = self._create_cnn_block(
-                                            self.config['conv_types'],
-                                            self.config['conv_filters'],
-                                            self.config['conv_kernels'],
-                                            self.config['conv_strides'],
-                                            self.config['dropout'])
-            if m == "imu3":
-                self.imu3_head = self._create_cnn_block(
-                                            self.config['conv_types'],
-                                            self.config['conv_filters'],
-                                            self.config['conv_kernels'],
-                                            self.config['conv_strides'],
-                                            self.config['dropout'])
-            print("hihi")
+            head = self._create_cnn_block(self.config['conv_types'],
+                                          self.config['conv_filters'],
+                                          self.config['conv_kernels'],
+                                          self.config['conv_strides'],
+                                          self.config['dropout'])
 
+            self.heads.append(head)
+
+    def model(self,inputs_shape):
+        x = keras.Input(shape=inputs_shape)
+        return keras.Model(inputs=[x], outputs=self.call(x))
 
 
 

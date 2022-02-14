@@ -13,41 +13,35 @@ learning_rate: 1e-3
 # remember to put '/' at he end of the path
 log_dir: "iros2022/"
 
+# None, 1x1, DoubleHop - residual connection type
+
 model_configs:
   -
-    name: "forces_RNN"
-    modalities: ["force"]
-    fusion_type: None
+    name: "Late_1"
+    modalities: ["force","imu0","imu1","imu2","imu3"]
+    fusion_type: "late"
+    conv_types: ["1x1", "DoubleHop", "DoubleHop"]
+    conv_filters: [ 16,32,64 ]
+    conv_kernels: [ 5,5,5 ]
+    conv_strides: [ 2,2,2 ]
+    fc_units: [100,6]
+    dropout: 0.5
+    lstm_nest: 3
+    lstm_units: 128
+    return_sequences: True
+  -
+    name: "Late_2"
+    modalities: ["force","imu0","imu1","imu2","imu3"]
+    fusion_type: "late"
+    conv_types: ["None", "DoubleHop", "DoubleHop"]
     conv_filters: [ 64,128,128 ]
-    conv_kernels: [ [1,3],[1,5],[1,5] ]
+    conv_kernels: [ 3,5,5 ]
     conv_strides: [ 1,3,3 ]
     fc_units: [100,6]
     dropout: 0.5
     lstm_nest: 3
     lstm_units: 128
+    return_sequences: True
 
-    return_sequences: False
-  -
-    name: "imu_shank_RNN"
-    modalities: ["imu0"]
-    fusion_type: None
-    dropout: 0.1
-    return_sequences: False
-  -
-    name: "imu_toes_RNN"
-    modalities: ["imu1"]
-    fusion_type: None
-    dropout: 0.1
-    return_sequences: False
-  -
-    name: "imu_bridge_RNN"
-    modalities: ["imu2"]
-    fusion_type: None
-    dropout: 0.1
-    return_sequences: False
-  -
-    name: "imu_heel_RNN"
-    modalities: ["imu3"]
-    fusion_type: None
-    dropout: 0.1
-    return_sequences: False
+
+

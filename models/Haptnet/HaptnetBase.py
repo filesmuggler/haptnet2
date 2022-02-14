@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+from tensorflow.keras.layers import *
 
 class HaptnetBase(tf.keras.Model):
     def __init__(self, batch_size: int,
@@ -18,7 +19,7 @@ class HaptnetBase(tf.keras.Model):
         self.fusion_type = fusion_type
         self._create_model()
 
-    def call(self,training=None):
+    def call(self,inputs,training=None):
         raise NotImplementedError
 
     def _create_model(self):
@@ -39,7 +40,7 @@ class HaptnetBase(tf.keras.Model):
     def _add_conv_block(self, conv_filters: list, conv_kernels: list, conv_strides: list, dropout: float):
         conv_net = tf.keras.Sequential()
         for i, (num_filters, kernel, stride) in enumerate(zip(conv_filters,conv_kernels,conv_strides)):
-            conv_net.add(tf.keras.layers.Conv1D(num_filters, tuple(kernel), stride, padding="SAME"))
+            conv_net.add(tf.keras.layers.Conv1D(num_filters, kernel, stride, padding="SAME"))
 
             if i != len(self.config['conv_filters']) - 1:
                 conv_net.add(tf.keras.layers.BatchNormalization())
@@ -47,6 +48,16 @@ class HaptnetBase(tf.keras.Model):
                 conv_net.add(tf.keras.layers.Dropout(dropout))
 
         return conv_net
+
+    def _create_cnn_block(self, conv_types: list, conv_filters: list, conv_kernels: list, conv_strides: list, dropout: float, input_shape):
+        self.conv_layers = []
+        for i, (type, num_filters, kernel, stride) in enumerate(zip(conv_types, conv_filters, conv_kernels, conv_strides)):
+            c = Conv1D(filters=num_filters, kernel_size=kernel, stride=stride, dropout=dropout, padding="SAME")
+
+
+    def _add_conv_layer(self, filter_size: int, kernel_size: int, stride: int, dropout: float):
+        c = Conv1D(filters=filter_size, kernel_size=kernel_size, stride=stride, dropout=dropout, padding="SAME")
+
 
     def _add_lstm_block(self, lstm_units: int, return_seq: bool, dropout: float, stateful: bool):
         fwd_block = tf.keras.Sequential()

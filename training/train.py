@@ -14,30 +14,23 @@ def train_model(dataset,config, num_classes):
     trainX, trainY, testX, testY = dataset
     batch_size = config['batch']
 
-
-
     for model_config in config['model_configs']:
         print("Running config: ", model_config['name'])
-        modalities = model_config['modalities']
-        num_modalities = len(modalities)
+        # modalities = model_config['modalities']
+        # num_modalities = len(modalities)
         fusion_type = model_config['fusion_type']
 
         if fusion_type == "None":
-            if "force" in modalities:
-                #TODO implement force case
-                pass
-            if "imu0" or "imu1" or "imu2" or "imu3" and not "force" in modalities:
-                #TODO implement better condition
-                pass
+            raise NotImplementedError("not implemented scenario")
         elif fusion_type == "early":
             #TODO implement case
-            pass
+            raise NotImplementedError("not implemented scenario")
         elif fusion_type == "mid":
             # TODO implement case
-            pass
+            raise NotImplementedError("not implemented scenario")
         elif fusion_type == "late":
             # TODO implement case
-            pass
+            raise NotImplementedError("not implemented scenario")
         else:
             raise NotImplementedError("not implemented scenario")
 

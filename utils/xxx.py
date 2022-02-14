@@ -15,18 +15,23 @@ import numpy as np
 # model.summary()
 
 
+def simple_res_block(x):
+    x1 = Conv1D(64, kernel_size=3, activation='relu', padding='same')(x)
+    x2 = Conv1D(32, kernel_size=3, padding='same')(x1)
+
+    res = Conv1D(32,kernel_size=1)(x)
+
+    added = Add()([res,x2])
+    return added
 
 def res_block(inputs_shape):
     x1 = Conv1D(64, kernel_size=3, activation='relu', padding='same')(inputs_shape)
     x2 = Conv1D(32, kernel_size=3, activation='relu', padding='same')(x1)
     x1_residual = Conv1D(32, kernel_size=3, activation='relu', padding='same')(inputs_shape)
-
     added = Add()([x1_residual, x2])
     return added
 
 #input_shape = (1,3,1)
-
-
 
 input_shape = (2,120,None)
 
@@ -36,8 +41,8 @@ inputs = Input(shape=input_shape)
 inputs_f = Input(shape=(1,120,3))
 inputs_q = Input(shape=(1,120,4))
 
-resnet_block_1 = res_block(inputs_f)
-resnet_block_2 = res_block(resnet_block_1)
+resnet_block_1 = simple_res_block(inputs_f)
+resnet_block_2 = simple_res_block(resnet_block_1)
 
 resnet_block_3 = res_block(inputs_q)
 resnet_block_4 = res_block(resnet_block_3)

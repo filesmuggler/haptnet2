@@ -30,19 +30,7 @@ def train_model(dataset,config, num_classes):
             # TODO implement case
             raise NotImplementedError("not implemented scenario")
         elif fusion_type == "late":
-            mock_data_f = np.random.rand(400, 3)
-            mock_data_q = np.random.rand(400, 4)
-
-            mock_data_ft = tf.convert_to_tensor(mock_data_f)
-            mock_data_ft = tf.expand_dims(mock_data_ft, 0)
-            # mock_data_ft = tf.expand_dims(mock_data_ft, 0)
-
-            mock_data_qt = tf.convert_to_tensor(mock_data_q)
-            mock_data_qt = tf.expand_dims(mock_data_qt, 0)
-            # mock_data_qt = tf.expand_dims(mock_data_qt, 0)
             model = HaptnetLate(batch_size,6,model_config,model_config['modalities'],model_config['fusion_type'])
-            out = model([mock_data_ft, mock_data_qt],training=False)
-            print("ahha")
         else:
             raise NotImplementedError("not implemented scenario")
 
@@ -108,7 +96,11 @@ def train_model(dataset,config, num_classes):
             num_epochs = config['num_epochs']
             for epoch in range(num_epochs):
                 print(f'running {epoch} epoch out of {num_epochs} of {fold_no} fold')
-
+                train_step = train_classification(model, train_writer, train_ds, optimizer, train_step, num_classes)
+                val_step = validate_classification(model, val_writer, val_ds, val_step, num_classes, "val")
+                test_step = validate_classification(model, test_writer, test_ds, test_step, num_classes, "test")
+            model_name = model_config['name'] + "_" + model_config['fusion_type'] + "_" + timestamp
+            model.save("../saved_models/models/" + model_name)
 
 
         print("x")
@@ -142,7 +134,11 @@ if __name__ == '__main__':
     num_classes = len(unique)
 
     y_train = np.array(y_train)
+    y_train = y_train[:,0,:]
+    y_train = y_train.tolist()
     y_test = np.array(y_test)
+    y_test = y_test[:,0,:]
+    y_test = y_test.tolist()
 
     dataset = [x_train, y_train, x_test, y_test]
 

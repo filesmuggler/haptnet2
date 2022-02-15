@@ -2,7 +2,7 @@ import time
 import tensorflow as tf
 from tqdm import tqdm
 
-from optimization import *
+from optimization.optimization import *
 from utils.tensorboard import *
 
 def train_classification(model,writer,dataset,optimizer,previous_steps,num_classes):
@@ -46,7 +46,45 @@ def train_classification(model,writer,dataset,optimizer,previous_steps,num_class
         previous_steps += 1
         metric_loss.reset_states()
         ca_metric_loss.reset_states()
-        confusion_matrix.reset_states()
+
         reset_metrics(confusion_metrics)
 
     return previous_steps
+
+def validate_classification(model,writer,ds,previous_steps,num_classes, prefix):
+    metric_loss = tf.keras.metrics.Mean(name="MeanLoss")
+    ca_metric_loss = tf.keras.metrics.CategoricalAccuracy(name="CatAcc")
+    confusion_metrics = create_confusion_metrics(num_classes, top_k=5)
+
+    for x_val, y_val in tqdm(ds):
+        # compute loss
+        logits_y = model(x_val, training=False)
+
+        loss_fn = tf.keras.losses.CategoricalCrossentropy(from_logits=True)
+
+        # compute loss
+        loss_value = tf.reduce_mean(loss_fn(y_val, logits_y))
+
+        ca_metric_loss.update_state(logits_y, y_val)
+        metric_loss.update_state(loss_value)
+
+        update_metrics(logits_y, y_val, confusion_metrics, 0.5)
+
+    if writer is not None:
+        with writer.as_default():
+            add_to_tensorboard({
+                "metrics": [metric_loss, ca_metric_loss, *confusion_metrics]
+                #"full_tensor": [confusion_matrix]
+            }, previous_steps, prefix)
+            writer.flush()
+        previous_steps += 1
+
+
+    metric_loss.reset_states()
+    ca_metric_loss.reset_states()
+    reset_metrics(confusion_metrics)
+
+    return previous_steps
+
+def test_categorical(model, ds, class_names, num_classes):
+    pass

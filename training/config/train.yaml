@@ -32,6 +32,7 @@ model_configs:
     fc_units: [100,6]
   -
     name: "Late_2"
+    modalities: ["force","imu0"]
     fusion_type: "late"
     dropout: 0.5
     conv_types: ["None", "SingleHop","SingleHop"]

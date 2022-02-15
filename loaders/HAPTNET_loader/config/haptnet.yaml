@@ -1,5 +1,5 @@
 #path_to_dataset: "../../datasets/HAPTNET/ip_dataset_final_4.pkl"
-path_to_dataset: "../datasets/HAPTNET/haptnet_1_preprocessed.pkl"
+path_to_dataset: "../datasets/HAPTNET/haptnet_2_preprocessed.pkl"
 save_to_pickle: False
 # Structure
 # class: [0,0,0,0,1,0]

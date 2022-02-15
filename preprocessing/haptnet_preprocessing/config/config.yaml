@@ -10,12 +10,12 @@ standarization: True
 # Transform labels for training
 one_hot_encoding: True
 one_hot_classes:
-  brick: '[1 0 0 0 0 0]'
-  cone: '[0 1 0 0 0 0]'
-  extinguisher: '[0 0 1 0 0 0]'
-  sack: '[0 0 0 1 0 0]'
-  sponge: '[0 0 0 0 1 0]'
-  toolbox: '[0 0 0 0 0 1]'
+  brick: [1, 0, 0, 0, 0, 0]
+  cone: [0, 1, 0, 0, 0, 0]
+  extinguisher: [0, 0, 1, 0, 0, 0]
+  sack: [0, 0, 0, 1, 0, 0]
+  sponge: [0, 0, 0, 0, 1, 0]
+  toolbox: [0, 0, 0, 0, 0, 1]
 
-preprocessed_dataset: ../../datasets/HAPTNET/haptnet_1_preprocessed.pkl
+preprocessed_dataset: ../../datasets/HAPTNET/haptnet_2_preprocessed.pkl
 

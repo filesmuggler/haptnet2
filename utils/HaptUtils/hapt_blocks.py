@@ -2,6 +2,41 @@ import  tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
+class Dense_Block(layers.Layer):
+    def __init__(self, neurons: int,
+                 activation="relu",
+                 dropout=0.5,
+                 beta=1.0,
+                 name="dense"):
+        super(Dense_Block, self).__init__()
+        self.dense = layers.Dense(neurons,name=name)
+        self.drop = layers.Dropout(rate=dropout)
+        self.bn = layers.BatchNormalization()
+        self.activation = activation
+        self.beta = beta
+        self.dropout = dropout
+
+    def call(self, input_tensor, training=False, **kwargs):
+        x = self.dense(input_tensor)
+        x = self.bn(x, training=training)
+        if self.activation == "relu":
+            x = tf.nn.relu(x)
+        elif self.activation == "silu":
+            x = tf.nn.silu(x, beta=self.beta)
+        elif self.activation == "gelu":
+            x = tf.nn.gelu(x)
+        elif self.activation == "None":
+            x = self.drop(x, training=training)
+            return x
+        else:
+            return NotImplementedError
+        x = self.drop(x, training=training)
+        return x
+
+    def model(self,inputs_shape):
+        x = keras.Input(shape=inputs_shape)
+        return keras.Model(inputs=[x], outputs=self.call(x))
+
 class CNN_1D_Block(layers.Layer):
     def __init__(self, out_channels: int,
                  kernel_size=3,
@@ -33,6 +68,10 @@ class CNN_1D_Block(layers.Layer):
             return NotImplementedError
         return x
 
+    def model(self,inputs_shape):
+        x = keras.Input(shape=inputs_shape)
+        return keras.Model(inputs=[x], outputs=self.call(x))
+
 class CNN_2D_Block(layers.Layer):
     def __init__(self, out_channels: int,
                  kernel_size=3,
@@ -63,6 +102,10 @@ class CNN_2D_Block(layers.Layer):
         else:
             return NotImplementedError
         return x
+
+    def model(self,inputs_shape):
+        x = keras.Input(shape=inputs_shape)
+        return keras.Model(inputs=[x], outputs=self.call(x))
 
 class Res_CNN1D_S_Block(layers.Layer):
     def __init__(self, channels: int,
@@ -99,6 +142,10 @@ class Res_CNN1D_S_Block(layers.Layer):
         iden = self.identity_mapping(input_tensor,training=training)
         x = layers.Add()([iden, x])
         return x
+
+    def model(self,inputs_shape):
+        x = keras.Input(shape=inputs_shape)
+        return keras.Model(inputs=[x], outputs=self.call(x))
 
 class Res_CNN1D_D_Block(layers.Layer):
     def __init__(self, channels: list,
@@ -145,5 +192,9 @@ class Res_CNN1D_D_Block(layers.Layer):
         iden = self.identity_mapping(input_tensor,training=training)
         x = layers.Add()([iden, x])
         return x
+
+    def model(self,inputs_shape):
+        x = keras.Input(shape=inputs_shape)
+        return keras.Model(inputs=[x], outputs=self.call(x))
 
 

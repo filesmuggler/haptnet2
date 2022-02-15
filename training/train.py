@@ -14,7 +14,7 @@ from models.Haptnet.HaptnetLate import HaptnetLate
 def train_model(dataset,config, num_classes):
     trainX, trainY, testX, testY = dataset
     batch_size = config['batch']
-
+    print("dupa")
     for model_config in config['model_configs']:
         print("Running config: ", model_config['name'])
         modalities = model_config['modalities']
@@ -30,7 +30,18 @@ def train_model(dataset,config, num_classes):
             # TODO implement case
             raise NotImplementedError("not implemented scenario")
         elif fusion_type == "late":
+            mock_data_f = np.random.rand(400, 3)
+            mock_data_q = np.random.rand(400, 4)
+
+            mock_data_ft = tf.convert_to_tensor(mock_data_f)
+            mock_data_ft = tf.expand_dims(mock_data_ft, 0)
+            # mock_data_ft = tf.expand_dims(mock_data_ft, 0)
+
+            mock_data_qt = tf.convert_to_tensor(mock_data_q)
+            mock_data_qt = tf.expand_dims(mock_data_qt, 0)
+            # mock_data_qt = tf.expand_dims(mock_data_qt, 0)
             model = HaptnetLate(batch_size,6,model_config,model_config['modalities'],model_config['fusion_type'])
+            out = model([mock_data_ft, mock_data_qt],training=False)
             print("ahha")
         else:
             raise NotImplementedError("not implemented scenario")

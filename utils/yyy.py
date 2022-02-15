@@ -4,7 +4,7 @@ from tensorflow.keras.layers import *
 import numpy as np
 
 from HaptUtils.hapt_blocks import *
-from models.Haptnet.HaptnetLate import HaptnetLate
+
 
 class ResNetLike(keras.Model):
     def __init__(self, name="None"):

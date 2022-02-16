@@ -57,7 +57,10 @@ class HaptnetLate(HaptnetBase):
 
             temp_outs.append(x_fc)
 
-        x_out = Add()(temp_outs)
+        if len(temp_outs)>1:
+            x_out = Add()(temp_outs)
+        else:
+            x_out = temp_outs[0]
 
         return x_out
 

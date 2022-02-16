@@ -42,12 +42,10 @@ def train_classification(model,writer,dataset,optimizer,previous_steps,num_class
             }, previous_steps, "train")
             writer.flush()
 
-        # TODO: should it be reset after epoch not after batch?
         previous_steps += 1
-        metric_loss.reset_states()
-        ca_metric_loss.reset_states()
-
-        reset_metrics(confusion_metrics)
+    metric_loss.reset_states()
+    ca_metric_loss.reset_states()
+    reset_metrics(confusion_metrics)
 
     return previous_steps
 

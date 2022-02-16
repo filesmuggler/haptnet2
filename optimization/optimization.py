@@ -4,6 +4,7 @@ def update_metrics(y,y_true,metrics:list):
     current_values = list()
     for m in metrics:
         y_pred = tf.nn.softmax(y)
+        y_pred = tf.where(y_pred >= 0.9, 1, 0)
         m.update_state(y_pred, y_true)
         current_values.append(m.result().numpy())
     return metrics, current_values
@@ -19,8 +20,8 @@ def create_confusion_metrics(num_classes, top_k):
         tf.keras.metrics.FalsePositives(name='fp'),
         tf.keras.metrics.TrueNegatives(name='tn'),
         tf.keras.metrics.FalseNegatives(name='fn'),
-        tf.keras.metrics.Precision(name='precision', top_k=top_k),
-        tf.keras.metrics.Recall(name='recall', top_k=top_k),
+        tf.keras.metrics.Precision(name='precision'),
+        tf.keras.metrics.Recall(name='recall'),
         tf.keras.metrics.MeanIoU(num_classes=num_classes, name='meanIOU')
     ]
 

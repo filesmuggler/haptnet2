@@ -19,7 +19,6 @@ class HaptnetBase(tf.keras.Model):
         self.config = config
         self.modalities = modalities
         self.fusion_type = fusion_type
-        self._create_model()
 
     def call(self, inputs, training=None):
         raise NotImplementedError
@@ -42,7 +41,10 @@ class HaptnetBase(tf.keras.Model):
     def _create_fc_block(self, fc_layers: list, dropout: float):
         fc_net = []
         for i, fc_units in enumerate(fc_layers):
-            d = Dense_Block(neurons=fc_units, dropout=dropout)
+            if i == len(fc_layers)-1:
+                d = Dense_Block(neurons=fc_units, dropout=dropout,last=True)
+            else:
+                d = Dense_Block(neurons=fc_units, dropout=dropout, last=False)
             fc_net.append(d)
 
         return fc_net

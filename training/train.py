@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 import tensorflow as tf
 
-#from skmultilearn.model_selection import IterativeStratification
+from skmultilearn.model_selection import IterativeStratification
 from sklearn.model_selection import StratifiedKFold
 
 from loaders.HAPTNET_loader.HaptnetLoader import HAPTNET_Loader
@@ -30,12 +30,14 @@ def train_model(dataset,config, num_classes):
             # TODO implement case
             raise NotImplementedError("not implemented scenario")
         elif fusion_type == "late":
-            model = HaptnetLate(batch_size,6,model_config,model_config['modalities'],model_config['fusion_type'])
+
+            model = HaptnetLate(batch_size, 6, model_config, model_config['modalities'], model_config['fusion_type'])
+
+            print("haha")
         else:
             raise NotImplementedError("not implemented scenario")
 
-        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        logdir = "../logs/scalars/" + config['log_dir'] + model_config['name'] + "_" + model_config['fusion_type'] + "_" + timestamp
+
 
         # setup optimizer
         lr = float(train_config['learning_rate'])
@@ -44,16 +46,22 @@ def train_model(dataset,config, num_classes):
         eta.assign(eta_value(0))
         optimizer = tf.keras.optimizers.Adam(eta)
 
-        # setup writers
-        logs_path = os.path.join(logdir)
-        os.makedirs(logs_path, exist_ok=True)
-        train_writer = tf.summary.create_file_writer(logs_path + "/train")
-        val_writer = tf.summary.create_file_writer(logs_path + "/val")
-        test_writer = tf.summary.create_file_writer(logs_path + "/test")
-
         #stratified sampling validation, validation dataset
-        kf = StratifiedKFold(n_splits=int(config['num_folds']))
+        kf = IterativeStratification(n_splits=int(config['num_folds']), order=1)
+
         for fold_no, (train_idx,val_idx) in enumerate(kf.split(X=trainX,y=trainY)):
+
+            timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+            logdir = "../logs/scalars/" + config['log_dir'] + model_config['name'] + "_" + model_config[
+                'fusion_type'] + "_fold_" + str(fold_no) + "_" + timestamp
+
+            # setup writers
+            logs_path = os.path.join(logdir)
+            os.makedirs(logs_path, exist_ok=True)
+            train_writer = tf.summary.create_file_writer(logs_path + "/train")
+            val_writer = tf.summary.create_file_writer(logs_path + "/val")
+            test_writer = tf.summary.create_file_writer(logs_path + "/test")
+
             train_pick_x, train_pick_y = [trainX[i] for i in train_idx], trainY[train_idx]
             val_pick_x, val_pick_y = [trainX[i] for i in val_idx], trainY[val_idx]
             print("Processing kfold no ",fold_no)
@@ -99,7 +107,7 @@ def train_model(dataset,config, num_classes):
                 train_step = train_classification(model, train_writer, train_ds, optimizer, train_step, num_classes)
                 val_step = validate_classification(model, val_writer, val_ds, val_step, num_classes, "val")
                 test_step = validate_classification(model, test_writer, test_ds, test_step, num_classes, "test")
-            model_name = model_config['name'] + "_" + model_config['fusion_type'] + "_" + timestamp
+            model_name = model_config['name'] + "_" + model_config['fusion_type'] + "_fold_" + str(fold_no) + "_" + timestamp
             model.save("../saved_models/models/" + model_name)
 
 
@@ -135,10 +143,8 @@ if __name__ == '__main__':
 
     y_train = np.array(y_train)
     y_train = y_train[:,0,:]
-    y_train = y_train.tolist()
     y_test = np.array(y_test)
-    y_test = y_test[:,0,:]
-    y_test = y_test.tolist()
+    y_test = y_test[:, 0, :]
 
     dataset = [x_train, y_train, x_test, y_test]
 

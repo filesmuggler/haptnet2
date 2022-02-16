@@ -3,7 +3,8 @@ import tensorflow as tf
 def update_metrics(y,y_true,metrics:list):
     current_values = list()
     for m in metrics:
-        m.update_state(y, y_true)
+        y_pred = tf.nn.softmax(y)
+        m.update_state(y_pred, y_true)
         current_values.append(m.result().numpy())
     return metrics, current_values
 

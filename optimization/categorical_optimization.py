@@ -33,7 +33,7 @@ def train_classification(model,writer,dataset,optimizer,previous_steps,num_class
         gradients = tape.gradient(loss_value, model.trainable_variables)
         optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
-        update_metrics(logits_y, y_train, confusion_metrics, 0.5)
+        update_metrics(logits_y, y_train, confusion_metrics)
 
         with writer.as_default():
             add_to_tensorboard({
@@ -68,7 +68,7 @@ def validate_classification(model,writer,ds,previous_steps,num_classes, prefix):
         ca_metric_loss.update_state(logits_y, y_val)
         metric_loss.update_state(loss_value)
 
-        update_metrics(logits_y, y_val, confusion_metrics, 0.5)
+        update_metrics(logits_y, y_val, confusion_metrics)
 
     if writer is not None:
         with writer.as_default():

@@ -38,6 +38,8 @@ class HaptnetLate(HaptnetBase):
                 x = c_block(x, training=training)
 
             x_f_rnn, x_b_rnn = x, x
+
+
             for f_r_block in self.f_rnn_body[i]:
                 x_f_rnn = f_r_block(x_f_rnn, training=training)
 
@@ -58,13 +60,6 @@ class HaptnetLate(HaptnetBase):
         x_out = Add()(temp_outs)
 
         return x_out
-
-
-
-
-
-
-
 
     def _create_model(self):
         num_mod = len(self.modalities)
@@ -97,8 +92,6 @@ class HaptnetLate(HaptnetBase):
             fc_head = self._create_fc_block(self.config['fc_units'],self.config['dropout'])
 
             self.fc_body.append(fc_head)
-
-
 
     def model(self,inputs_shape):
         x = keras.Input(shape=inputs_shape)

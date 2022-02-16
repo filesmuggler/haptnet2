@@ -7,7 +7,8 @@ class Dense_Block(layers.Layer):
                  activation="relu",
                  dropout=0.5,
                  beta=1.0,
-                 name="dense"):
+                 name="dense",
+                 last=False):
         super(Dense_Block, self).__init__()
         self.dense = layers.Dense(neurons,name=name)
         self.drop = layers.Dropout(rate=dropout)
@@ -15,22 +16,24 @@ class Dense_Block(layers.Layer):
         self.activation = activation
         self.beta = beta
         self.dropout = dropout
+        self.last = last
 
     def call(self, input_tensor, training=False, **kwargs):
         x = self.dense(input_tensor)
-        x = self.bn(x, training=training)
-        if self.activation == "relu":
-            x = tf.nn.relu(x)
-        elif self.activation == "silu":
-            x = tf.nn.silu(x, beta=self.beta)
-        elif self.activation == "gelu":
-            x = tf.nn.gelu(x)
-        elif self.activation == "None":
+        if not self.last:
+            x = self.bn(x, training=training)
+            if self.activation == "relu":
+                x = tf.nn.relu(x)
+            elif self.activation == "silu":
+                x = tf.nn.silu(x, beta=self.beta)
+            elif self.activation == "gelu":
+                x = tf.nn.gelu(x)
+            elif self.activation == "None":
+                x = self.drop(x, training=training)
+                return x
+            else:
+                return NotImplementedError
             x = self.drop(x, training=training)
-            return x
-        else:
-            return NotImplementedError
-        x = self.drop(x, training=training)
         return x
 
     def model(self,inputs_shape):

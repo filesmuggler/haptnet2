@@ -11,6 +11,7 @@ def train_classification(model,writer,dataset,optimizer,previous_steps,num_class
     # auc_metric = create_auc_metrics()
     ca_metric_loss = tf.keras.metrics.CategoricalAccuracy(name="CatAcc")
     confusion_metrics = create_confusion_metrics(num_classes, top_k=5)
+    auc_metrics = create_auc_metrics([[0,0,0,0,0,1],[0,0,0,0,1,0],[0,0,0,1,0,0],[0,0,1,0,0,0],[0,1,0,0,0,0],[1,0,0,0,0,0]])
 
     for x_train, y_train in tqdm(dataset):
         with tf.GradientTape() as tape:
@@ -34,10 +35,11 @@ def train_classification(model,writer,dataset,optimizer,previous_steps,num_class
         optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
         update_metrics(logits_y, y_train, confusion_metrics)
+        update_metrics(logits_y, y_train, auc_metrics)
 
         with writer.as_default():
             add_to_tensorboard({
-                "metrics": [metric_loss, ca_metric_loss, *confusion_metrics]
+                "metrics": [metric_loss, ca_metric_loss, *confusion_metrics, *auc_metrics]
                 #"full_tensor": [confusion_matrix]
             }, previous_steps, "train")
             writer.flush()
@@ -53,6 +55,9 @@ def validate_classification(model,writer,ds,previous_steps,num_classes, prefix):
     metric_loss = tf.keras.metrics.Mean(name="MeanLoss")
     ca_metric_loss = tf.keras.metrics.CategoricalAccuracy(name="CatAcc")
     confusion_metrics = create_confusion_metrics(num_classes, top_k=5)
+    auc_metrics = create_auc_metrics(
+        [[0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 1, 0], [0, 0, 0, 1, 0, 0], [0, 0, 1, 0, 0, 0], [0, 1, 0, 0, 0, 0],
+         [1, 0, 0, 0, 0, 0]])
 
     for x_val, y_val in tqdm(ds):
         # compute loss
@@ -67,11 +72,12 @@ def validate_classification(model,writer,ds,previous_steps,num_classes, prefix):
         metric_loss.update_state(loss_value)
 
         update_metrics(logits_y, y_val, confusion_metrics)
+        update_metrics(logits_y, y_val, auc_metrics)
 
     if writer is not None:
         with writer.as_default():
             add_to_tensorboard({
-                "metrics": [metric_loss, ca_metric_loss, *confusion_metrics]
+                "metrics": [metric_loss, ca_metric_loss, *confusion_metrics, *auc_metrics]
                 #"full_tensor": [confusion_matrix]
             }, previous_steps, prefix)
             writer.flush()
@@ -81,6 +87,7 @@ def validate_classification(model,writer,ds,previous_steps,num_classes, prefix):
     metric_loss.reset_states()
     ca_metric_loss.reset_states()
     reset_metrics(confusion_metrics)
+    reset_metrics(auc_metrics)
 
     return previous_steps
 

@@ -54,7 +54,7 @@ def train_model(dataset,config, num_classes):
             timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
             logdir = "../logs/scalars/" + config['log_dir'] + model_config['name'] + "_" + model_config[
                 'fusion_type'] + "_fold_" + str(fold_no) + "_" + timestamp
-
+            print(logdir)
             # setup writers
             logs_path = os.path.join(logdir)
             os.makedirs(logs_path, exist_ok=True)
@@ -71,13 +71,51 @@ def train_model(dataset,config, num_classes):
             temp_train_X = []
             temp_val_X = []
             temp_test_X = []
-            for i in range(num_modalities):
-                temp_chunk = [modality[i] for modality in train_pick_x]
-                temp_train_X.append(temp_chunk)
-                temp_chunk = [modality[i] for modality in val_pick_x]
-                temp_val_X.append(temp_chunk)
-                temp_chunk = [modality[i] for modality in testX]
-                temp_test_X.append(temp_chunk)
+
+            for m in modalities:
+                if m=="force":
+                    temp_chunk = [data_packet[0] for data_packet in train_pick_x]
+                    temp_train_X.append(temp_chunk)
+                    temp_chunk = [data_packet[0] for data_packet in val_pick_x]
+                    temp_val_X.append(temp_chunk)
+                    temp_chunk = [data_packet[0] for data_packet in testX]
+                    temp_test_X.append(temp_chunk)
+                if m=="imu0":
+                    temp_chunk = [data_packet[1] for data_packet in train_pick_x]
+                    temp_train_X.append(temp_chunk)
+                    temp_chunk = [data_packet[1] for data_packet in val_pick_x]
+                    temp_val_X.append(temp_chunk)
+                    temp_chunk = [data_packet[1] for data_packet in testX]
+                    temp_test_X.append(temp_chunk)
+                if m=="imu1":
+                    temp_chunk = [data_packet[2] for data_packet in train_pick_x]
+                    temp_train_X.append(temp_chunk)
+                    temp_chunk = [data_packet[2] for data_packet in val_pick_x]
+                    temp_val_X.append(temp_chunk)
+                    temp_chunk = [data_packet[2] for data_packet in testX]
+                    temp_test_X.append(temp_chunk)
+                if m=="imu2":
+                    temp_chunk = [data_packet[3] for data_packet in train_pick_x]
+                    temp_train_X.append(temp_chunk)
+                    temp_chunk = [data_packet[3] for data_packet in val_pick_x]
+                    temp_val_X.append(temp_chunk)
+                    temp_chunk = [data_packet[3] for data_packet in testX]
+                    temp_test_X.append(temp_chunk)
+                if m=="imu3":
+                    temp_chunk = [data_packet[4] for data_packet in train_pick_x]
+                    temp_train_X.append(temp_chunk)
+                    temp_chunk = [data_packet[4] for data_packet in val_pick_x]
+                    temp_val_X.append(temp_chunk)
+                    temp_chunk = [data_packet[4] for data_packet in testX]
+                    temp_test_X.append(temp_chunk)
+
+            # for i in range(num_modalities):
+            #     temp_chunk = [modality[i] for modality in train_pick_x]
+            #     temp_train_X.append(temp_chunk)
+            #     temp_chunk = [modality[i] for modality in val_pick_x]
+            #     temp_val_X.append(temp_chunk)
+            #     temp_chunk = [modality[i] for modality in testX]
+            #     temp_test_X.append(temp_chunk)
 
             train_x_reframed = tuple(temp_train_X)
             val_x_reframed = tuple(temp_val_X)

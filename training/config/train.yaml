@@ -17,28 +17,14 @@ log_dir: "iros2022/"
 
 model_configs:
   -
-    name: "Late_force"
-    modalities: ["force"]
-    fusion_type: "late"
-    dropout: 0.5
-    conv_types: ["None", "SingleHop","SingleHop","SingleHop"]
-    conv_filters: [ 16,32,64,64 ]
-    conv_kernels: [ 5,5,5,5 ]
-    conv_strides: [ 2,2,2,2 ]
-    lstm_nest: 3
-    lstm_units: 128
-    return_sequences: True
-    stateful: False
-    fc_units: [100,6]
-  -
     name: "Late_imu0"
-    modalities: ["imu0"]
+    modalities: ["imu0","imu1"]
     fusion_type: "late"
     dropout: 0.5
-    conv_types: ["None", "SingleHop","SingleHop","SingleHop"]
-    conv_filters: [ 16,32,64,64 ]
-    conv_kernels: [ 5,5,5,5 ]
-    conv_strides: [ 2,2,2,2 ]
+    conv_types: ["SingleHop","SingleHop","SingleHop"]
+    conv_filters: [ 64,64,64 ]
+    conv_kernels: [ 3,3,3 ]
+    conv_strides: [ 2,2,2 ]
     lstm_nest: 3
     lstm_units: 128
     return_sequences: True
@@ -49,10 +35,10 @@ model_configs:
     modalities: ["imu1"]
     fusion_type: "late"
     dropout: 0.5
-    conv_types: ["None", "SingleHop","SingleHop","SingleHop"]
-    conv_filters: [ 16,32,64,64 ]
-    conv_kernels: [ 5,5,5,5 ]
-    conv_strides: [ 2,2,2,2 ]
+    conv_types: ["SingleHop","SingleHop","SingleHop"]
+    conv_filters: [ 64,64,64 ]
+    conv_kernels: [ 3,3,3 ]
+    conv_strides: [ 2,2,2 ]
     lstm_nest: 3
     lstm_units: 128
     return_sequences: True
@@ -63,10 +49,10 @@ model_configs:
     modalities: ["imu2"]
     fusion_type: "late"
     dropout: 0.5
-    conv_types: ["None", "SingleHop","SingleHop","SingleHop"]
-    conv_filters: [ 16,32,64,64 ]
-    conv_kernels: [ 5,5,5,5 ]
-    conv_strides: [ 2,2,2,2 ]
+    conv_types: ["SingleHop","SingleHop","SingleHop"]
+    conv_filters: [ 64,64,64 ]
+    conv_kernels: [ 3,3,3 ]
+    conv_strides: [ 2,2,2 ]
     lstm_nest: 3
     lstm_units: 128
     return_sequences: True
@@ -77,52 +63,66 @@ model_configs:
     modalities: ["imu3"]
     fusion_type: "late"
     dropout: 0.5
-    conv_types: ["None", "SingleHop","SingleHop","SingleHop"]
-    conv_filters: [ 16,32,64,64 ]
-    conv_kernels: [ 5,5,5,5 ]
-    conv_strides: [ 2,2,2,2 ]
+    conv_types: ["SingleHop","SingleHop","SingleHop"]
+    conv_filters: [ 64,64,64 ]
+    conv_kernels: [ 3,3,3 ]
+    conv_strides: [ 2,2,2 ]
     lstm_nest: 3
     lstm_units: 128
     return_sequences: True
     stateful: False
     fc_units: [100,6]
   -
-    name: "Late_all"
+    name: "Late_all_1"
     modalities: ["force","imu0","imu1","imu2","imu3"]
     fusion_type: "late"
     dropout: 0.5
-    conv_types: ["None", "SingleHop","SingleHop","SingleHop"]
-    conv_filters: [ 16,32,64,64 ]
-    conv_kernels: [ 5,5,5,5 ]
-    conv_strides: [ 2,2,2,2 ]
+    conv_types: ["SingleHop","SingleHop","SingleHop"]
+    conv_filters: [ 64,64,64 ]
+    conv_kernels: [ 3,3,3 ]
+    conv_strides: [ 2,2,2 ]
     lstm_nest: 3
     lstm_units: 128
     return_sequences: True
     stateful: False
     fc_units: [100,6]
   -
-    name: "Late_1"
-    modalities: ["force","imu0"]
+    name: "Late_all_1"
+    modalities: ["force","imu0","imu1","imu2","imu3"]
     fusion_type: "late"
     dropout: 0.5
-    conv_types: ["None", "SingleHop","SingleHop","SingleHop"]
-    conv_filters: [ 16,32,64,64 ]
-    conv_kernels: [ 5,5,5,5 ]
-    conv_strides: [ 2,2,2,2 ]
+    conv_types: ["DoubleHop","DoubleHop","DoubleHop"]
+    conv_filters: [ 64,64,64 ]
+    conv_kernels: [ 3,3,3 ]
+    conv_strides: [ 2,2,2 ]
     lstm_nest: 3
     lstm_units: 128
     return_sequences: True
     stateful: False
     fc_units: [100,6]
   -
-    name: "Late_2"
-    modalities: ["force","imu0"]
+    name: "Late_all_3"
+    modalities: ["force","imu0","imu1","imu2","imu3"]
     fusion_type: "late"
     dropout: 0.5
-    conv_types: ["None", "SingleHop","DoubleHop","DoubleHop"]
-    conv_filters: [ 16,32,64,64 ]
-    conv_kernels: [ 5,5,5,5 ]
-    conv_strides: [ 2,2,2,2 ]
+    conv_types: ["SingleHop","DoubleHop","DoubleHop"]
+    conv_filters: [ 64,64,64 ]
+    conv_kernels: [ 3,3,3 ]
+    conv_strides: [ 2,2,2 ]
+    lstm_nest: 3
+    lstm_units: 128
+    return_sequences: True
+    stateful: False
+    fc_units: [100,6]
+  -
+    name: "Late_force"
+    modalities: ["force"]
+    fusion_type: "late"
+    dropout: 0.5
+    conv_types: ["SingleHop","SingleHop","SingleHop"]
+    conv_filters: [ 64,64,64 ]
+    conv_kernels: [ 3,3,3 ]
+    conv_strides: [ 2,2,2 ]
     lstm_nest: 3
     lstm_units: 128
     return_sequences: True

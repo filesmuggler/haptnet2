@@ -181,8 +181,8 @@ class Res_CNN1D_D_Block(layers.Layer):
 
         self.identity_mapping = CNN_1D_Block(
                                 out_channels=channels[1],
-                                kernel_size=kernel_size[1],
-                                stride=stride[1],
+                                kernel_size=2*kernel_size[1],
+                                stride=2*stride[1],
                                 padding="same",
                                 activation="None",
                                 dropout=0.0,

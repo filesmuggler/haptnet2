@@ -73,6 +73,11 @@ class HaptnetBase(tf.keras.Model):
                                           kernel_size=[kernel, kernel],
                                           stride=[stride, stride],
                                           dropout=dropout).model(input_shape)
+                elif i == len(conv_filters)-1:
+                    c = Res_CNN1D_D_Block(channels=[num_filters, num_filters],
+                                          kernel_size=[kernel, kernel],
+                                          stride=[stride, stride],
+                                          dropout=dropout)
                 else:
                     c = Res_CNN1D_D_Block(channels=[num_filters, num_filters],
                                           kernel_size=[kernel, kernel],

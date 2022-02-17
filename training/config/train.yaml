@@ -16,12 +16,25 @@ log_dir: "iros2022/"
 # None, SingleHop, DoubleHop - residual connection type
 
 model_configs:
-  -
-    name: "Late_imu0"
-    modalities: ["imu0","imu1"]
+  - name: "Late_imu0"
+    modalities: [ "imu0" ]
     fusion_type: "late"
     dropout: 0.5
-    conv_types: ["SingleHop","SingleHop","SingleHop"]
+    conv_types: [ "SingleHop","SingleHop","DoubleHop" ]
+    conv_filters: [ 64,64,64 ]
+    conv_kernels: [ 3,3,3 ]
+    conv_strides: [ 2,2,2 ]
+    lstm_nest: 3
+    lstm_units: 128
+    return_sequences: True
+    stateful: False
+    fc_units: [ 100,6 ]
+  -
+    name: "Late_imu1"
+    modalities: ["imu1"]
+    fusion_type: "late"
+    dropout: 0.5
+    conv_types: [ "SingleHop","SingleHop","DoubleHop" ]
     conv_filters: [ 64,64,64 ]
     conv_kernels: [ 3,3,3 ]
     conv_strides: [ 2,2,2 ]
@@ -31,11 +44,11 @@ model_configs:
     stateful: False
     fc_units: [100,6]
   -
-    name: "Late_imu1"
-    modalities: ["imu1"]
+    name: "Late_force"
+    modalities: ["force"]
     fusion_type: "late"
     dropout: 0.5
-    conv_types: ["SingleHop","SingleHop","SingleHop"]
+    conv_types: [ "SingleHop","SingleHop","DoubleHop" ]
     conv_filters: [ 64,64,64 ]
     conv_kernels: [ 3,3,3 ]
     conv_strides: [ 2,2,2 ]
@@ -49,7 +62,7 @@ model_configs:
     modalities: ["imu2"]
     fusion_type: "late"
     dropout: 0.5
-    conv_types: ["SingleHop","SingleHop","SingleHop"]
+    conv_types: [ "SingleHop","SingleHop","DoubleHop" ]
     conv_filters: [ 64,64,64 ]
     conv_kernels: [ 3,3,3 ]
     conv_strides: [ 2,2,2 ]
@@ -63,7 +76,7 @@ model_configs:
     modalities: ["imu3"]
     fusion_type: "late"
     dropout: 0.5
-    conv_types: ["SingleHop","SingleHop","SingleHop"]
+    conv_types: [ "SingleHop","SingleHop","DoubleHop" ]
     conv_filters: [ 64,64,64 ]
     conv_kernels: [ 3,3,3 ]
     conv_strides: [ 2,2,2 ]
@@ -77,7 +90,7 @@ model_configs:
     modalities: ["force","imu0","imu1","imu2","imu3"]
     fusion_type: "late"
     dropout: 0.5
-    conv_types: ["SingleHop","SingleHop","SingleHop"]
+    conv_types: [ "SingleHop","SingleHop","DoubleHop" ]
     conv_filters: [ 64,64,64 ]
     conv_kernels: [ 3,3,3 ]
     conv_strides: [ 2,2,2 ]
@@ -87,7 +100,7 @@ model_configs:
     stateful: False
     fc_units: [100,6]
   -
-    name: "Late_all_1"
+    name: "Late_all_2"
     modalities: ["force","imu0","imu1","imu2","imu3"]
     fusion_type: "late"
     dropout: 0.5
